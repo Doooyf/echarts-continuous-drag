@@ -15,6 +15,8 @@ import drag from 'drag';
 drag.setOption(option).drag(myChart);
 ```
 
+
+
 ## License
 
 [MIT](https://github.com/Doooyf/echarts-continuous-drag/blob/master/LICENSE)
