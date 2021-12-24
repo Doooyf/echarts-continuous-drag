@@ -1,6 +1,6 @@
 {
   "name": "ecdrag",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "echart's continuous drag; echarts的连续拖动插件",
   "main": "index.js",
   "scripts": {

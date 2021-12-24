@@ -2,7 +2,6 @@
  * @name echarts连续拖动插件
  * @author Jyf
  * @date 2021-12-22
- * @version 0.0.1
  *
  * 用于Echarts连续拖动功能插件，该插件依靠配置tooltip.trigger下的'axis'来做处理
  * 支持series data多维操作
