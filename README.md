@@ -5,6 +5,8 @@
 
 > 用于Echarts连续拖动功能插件，该插件依靠配置tooltip.trigger下的'axis'来做处理
  
+![avatar](./ecdrag.gif)
+ 
 插件使用链式写法
 ```javascript
 import drag from 'drag';
