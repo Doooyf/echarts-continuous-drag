@@ -8,7 +8,7 @@
  * 只支持Y轴，不支持多轴
  * 插件链式写法 drag.setOption(option).drag(myChart)
  * */
-export default {
+ export default {
   myChart: null,
   option: {}, // Echarts的配置参数
   useOption: { seriesIndex: 0, yAxisIndex: 0 }, // 使用对象 https://echarts.apache.org/zh/api.html#echartsInstance.convertFromPixel
@@ -105,9 +105,19 @@ export default {
 
     // 鼠标点击、拖动事件
     myChart.on('mousedown', (params) => {
-      const { seriesIndex } = params;
+      const { seriesIndex, seriesName, seriesId } = params;
       const { yAxisIndex } = myChart.getOption().series[seriesIndex];
+
+      if (!(this.useOption.seriesIndex === seriesIndex || this.useOption.seriesName === seriesName || this.useOption.seriesId === seriesId)) return false;
+
+      // 鼠标抬起事件
+      document.onmouseup = function () { // 监听鼠标up事件，关闭
+        myChart.off('showTip');
+      };
+
+      const dataZoom = myChart.getOption().dataZoom;
       myChart.on('showTip', (params) => {
+        this.option.dataZoom = dataZoom;
         const xy = myChart.convertFromPixel(this.useOption, [params.x, params.y]);
         const seriesVal = Number(xy[1].toFixed(2));
         const { data } = this.option.series[seriesIndex];
@@ -126,13 +136,9 @@ export default {
         if (typeof yAxis.max !== 'function') yAxis.max = this.getMax(data) + this.step;
 
         myChart.setOption(this.option);
-        return func(xy);
+
+        if (typeof func === "function") return func(xy);
       });
     });
-
-    // 鼠标抬起事件
-    document.onmouseup = function () { // 监听鼠标up事件，关闭
-      myChart.off('showTip');
-    };
-  },
+  }
 };
