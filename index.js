@@ -15,6 +15,7 @@
   force: false, // 是否强制
   animation: true, // 是否开启动画 关闭动画可增加流畅度
   step: 1, // 最大值更新步长
+  autoMaxCount: false, // 自动计算最大值
   /**
    * 设置Echarts配置
    * @param option
@@ -73,6 +74,10 @@
     }
     return Math.max(...data.map((i) => i[1]));
   },
+  setAutoMax(status = false) {
+    this.autoMaxCount = status
+    return false
+  },
   /**
    * main
    *
@@ -118,7 +123,7 @@
       const dataZoom = myChart.getOption().dataZoom;
       myChart.on('showTip', (params) => {
         this.option.dataZoom = dataZoom;
-        const xy = myChart.convertFromPixel(this.useOption, [params.x, params.y]);
+        const xy = myChart.convertFromPixel({seriesIndex, yAxisIndex}, [params.x, params.y]);
         const seriesVal = Number(xy[1].toFixed(2));
         const { data } = this.option.series[seriesIndex];
 
@@ -130,10 +135,12 @@
           data[params.dataIndex][1] = seriesVal;
         }
 
-        // 非方法未固定max，强制修改动态
-        let yAxis = this.option.yAxis;
-        yAxis = yAxis[yAxisIndex] || yAxis;
-        if (typeof yAxis.max !== 'function') yAxis.max = this.getMax(data) + this.step;
+        if (this.autoMaxCount) {
+          // 非方法未固定max，强制修改动态
+          let yAxis = this.option.yAxis;
+          yAxis = yAxis[yAxisIndex] || yAxis;
+          if (typeof yAxis.max !== 'function') yAxis.max = this.getMax(data) + this.step;
+        }
 
         myChart.setOption(this.option);
 
