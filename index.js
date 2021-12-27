@@ -8,7 +8,7 @@
  * 只支持Y轴，不支持多轴
  * 插件链式写法 drag.setOption(option).drag(myChart)
  * */
- export default {
+export default {
   myChart: null,
   option: {}, // Echarts的配置参数
   useOption: { seriesIndex: 0, yAxisIndex: 0 }, // 使用对象 https://echarts.apache.org/zh/api.html#echartsInstance.convertFromPixel
@@ -76,7 +76,7 @@
   },
   setAutoMax(status = false) {
     this.autoMaxCount = status
-    return false
+    return this
   },
   /**
    * main
@@ -144,7 +144,7 @@
 
         myChart.setOption(this.option);
 
-        if (typeof func === "function") return func(xy);
+        if (typeof func === "function") return func(xy[0], xy[1]);
       });
     });
   }
