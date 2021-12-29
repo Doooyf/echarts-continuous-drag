@@ -1,6 +1,6 @@
 {
   "name": "ecdrag",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "echart's continuous drag; echarts的连续拖动插件",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Doooyf/echarts-continuous-drag.git"
+  },
   "devDependencies": {
     "eslint": "^8.5.0",
     "eslint-plugin-vue": "^8.2.0"
