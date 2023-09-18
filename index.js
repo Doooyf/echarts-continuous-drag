@@ -12,13 +12,14 @@ export default {
   myChart: null,
   option: {}, // Echarts的配置参数
   useOption: { seriesIndex: 0, yAxisIndex: 0 }, // 使用对象 https://echarts.apache.org/zh/api.html#echartsInstance.convertFromPixel
+  useOptions: [], // [{ seriesIndex: 0, yAxisIndex: 0 }]
   force: false, // 是否强制
   animation: true, // 是否开启动画 关闭动画可增加流畅度
   step: 1, // 最大值更新步长
   autoMaxCount: false, // 自动计算最大值
   /**
    * 设置Echarts配置
-   * @param option
+   * @param option echarts的配置项
    * @return {this}
    */
   setOption(option) {
@@ -27,7 +28,7 @@ export default {
   },
   /**
    * 设置使用对象配置
-   * @param option
+   * @param option 配置使用项
    * @return {this}
    */
   setUseOption(option = { seriesIndex: 0, yAxisIndex: 0 }) {
@@ -35,8 +36,17 @@ export default {
     return this;
   },
   /**
+   * 设置使用多个对象配置
+   * @param options 配置使用项
+   * @returns {echarts连续拖动插件}
+   */
+  setUseOptions(options = [{ seriesIndex: 0, yAxisIndex: 0 }]) {
+    this.useOptions = options;
+    return this;
+  },
+  /**
    * 设置是否强制配置
-   * @param force
+   * @param force 是否强制
    * @return {this}
    */
   setForce(force = false) {
@@ -45,7 +55,7 @@ export default {
   },
   /**
    * 动画设置
-   * @param animation
+   * @param animation 是否关闭动画
    * @return {this}
    */
   setAnimation(animation = true) {
@@ -88,7 +98,7 @@ export default {
   drag(myChart, func) {
     // 判断是否echarts
     if (myChart.id.substring(0, 8) !== `ec_${new Date().getTime().toString().substring(0, 5)}`) {
-      console.error('本插件只适用于Echarts。');
+      console.error('ecdrag插件只适用于Echarts。');
       return false;
     }
 
@@ -96,7 +106,7 @@ export default {
     // 判断axis
     if (this.option.tooltip.trigger !== 'axis') {
       if (!this.force) { // 不强制
-        console.error('本插件需要tooltip触发类型请使用\'axis\'');
+        console.error('ecdrag插件需要tooltip触发类型请使用\'axis\'');
         return false;
       }
       // 强制添加axis操作
@@ -111,9 +121,18 @@ export default {
     // 鼠标点击、拖动事件
     myChart.on('mousedown', (params) => {
       const { seriesIndex, seriesName, seriesId } = params;
+
+      console.log("seriesIndex", seriesIndex)
       const { yAxisIndex } = myChart.getOption().series[seriesIndex];
 
-      if (!(this.useOption.seriesIndex === seriesIndex || this.useOption.seriesName === seriesName || this.useOption.seriesId === seriesId)) return false;
+      // 根据useOption做限制操作
+      if (this.useOptions.length > 0) {
+        const useOption = this.useOptions.find(i => i.seriesIndex === seriesIndex || i.seriesName === seriesName || i.seriesId === seriesId)
+        if (!useOption) return false
+      } else {
+        if (!(this.useOption.seriesIndex === seriesIndex || this.useOption.seriesName === seriesName || this.useOption.seriesId === seriesId)) return false;
+      }
+
 
       // 鼠标抬起事件
       document.onmouseup = function () { // 监听鼠标up事件，关闭
@@ -144,7 +163,7 @@ export default {
 
         myChart.setOption(this.option);
 
-        if (typeof func === "function") return func(xy[0], xy[1]);
+        if (typeof func === "function") return func(xy[0], xy[1], seriesIndex);
       });
     });
   }
